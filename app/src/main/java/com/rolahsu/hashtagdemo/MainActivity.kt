@@ -1,5 +1,6 @@
 package com.rolahsu.hashtagdemo
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +10,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.text.style.ForegroundColorSpan
+
+import android.text.SpannableString
+import java.util.regex.Pattern
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var editText: EditText
@@ -25,13 +31,15 @@ class MainActivity : AppCompatActivity() {
         clearBtn = findViewById(R.id.clearBtn)
 
         button.setOnClickListener {
-            findHashTag(editText.text.toString())
-            var outputString = ""
-            hashtagList.forEach {
-                outputString += it + "\n"
-            }
-            output.text = outputString
+            colorHashTag(editText.text.toString())
+//            findHashTagUseRegex(editText.text.toString())
+//            var outputString = ""
+//            hashtagList.forEach {
+//                outputString += it + "\n"
+//            }
+//            output.text = outputString
         }
+
 
         clearBtn.setOnClickListener {
             output.text = ""
@@ -39,6 +47,27 @@ class MainActivity : AppCompatActivity() {
             hashtagList.clear()
         }
 
+    }
+
+    fun findHashTagUseRegex(text: String) {
+        val matcher = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(text)
+        while (matcher.find()) {
+            hashtagList.add(text.subSequence(matcher.start(), matcher.end()).toString())
+        }
+    }
+
+    fun colorHashTag(text: String) {
+        val hashtagintitle = SpannableString(text)
+        val matcher = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(hashtagintitle)
+        while (matcher.find()) {
+            hashtagintitle.setSpan(
+                ForegroundColorSpan(Color.BLUE),
+                matcher.start(),
+                matcher.end(),
+                0
+            )
+        }
+        output.text = hashtagintitle
     }
 
     fun findHashTag(text: String) {
